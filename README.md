@@ -13,4 +13,5 @@ available: ![Here](https://archive.ics.uci.edu/dataset/235/individual+household+
 The dataset is licensed under the **Creative Commons Attribution 4.0 International (CC BY 4.0)** license.  
 License details: ![Here](https://creativecommons.org/licenses/by/4.0/legalcode)
 
-Changes made: 
+## <ins>Citation</ins>
+Hebrail, G. & Berard, A. (2006). Individual Household Electric Power Consumption [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C58K54.
