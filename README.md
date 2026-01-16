@@ -1,4 +1,5 @@
 # household-electricity-demand-forecasting
+A time series forecasting model, using historical time-ordered data to predict future values, using machine learning (PyTorch)
 
 ## Dataset description
 It is a Time Series Dataset
