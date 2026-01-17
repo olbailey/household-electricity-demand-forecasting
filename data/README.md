@@ -1,4 +1,7 @@
-dataset available from ![Here](https://archive.ics.uci.edu/dataset/235/individual+household+electric+power+consumption)
+# How to run
+run scripts/ download_data.py to download dataset into directory
+
+dataset Website source ![Here](https://archive.ics.uci.edu/dataset/235/individual+household+electric+power+consumption)
 
 ## Data analysis
 Dataset contains 25979 rows with missing data points   
