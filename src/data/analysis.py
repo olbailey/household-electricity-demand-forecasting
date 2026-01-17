@@ -12,18 +12,28 @@ def find_NANS():
     print(null_dates)
     print(f"number of days containg null fields: {null_dates.size}")
 
+def convert_datetime(df_: pd.DataFrame) -> pd.DataFrame:
+    df_["datetime"] = pd.to_datetime(
+        df_[["Date", "Time"]].agg(' '.join, axis=1),
+        dayfirst=True
+    )
+    df_.drop(columns=["Date", "Time"], inplace=True)
+    return df_.iloc[:, [7, 0, 1, 2, 3, 4, 5, 6]]
+
+def correcting_dataframe(df_: pd.DataFrame) -> pd.DataFrame:
+    '''
+    Replaces figurative nan '?' with numpy.nan values. 
+    Corrects data types of columns to floats where necessary
+    '''
+    df_.replace('?', np.nan, inplace=True)
+
+    convert_dict = {header: float for header in list(df_)[2:]}
+    return df_.astype(convert_dict)
+
 df = pd.read_csv("data/raw/household_power_consumption.txt", sep=';')
-df.replace('?', np.nan, inplace=True)
 
-convert_dict = {header: float for header in list(df)[2:]}
-df = df.astype(convert_dict)
-
-df["datetime"] = pd.to_datetime(
-    df[["Date", "Time"]].agg(' '.join, axis=1),
-    dayfirst=True
-)
-df.drop(columns=["Date", "Time"], inplace=True)
-df = df.iloc[:, [7, 0, 1, 2, 3, 4, 5, 6]]
+df = correcting_dataframe(df)
+df = convert_datetime(df)
 
 print(df.head())
 
