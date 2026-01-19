@@ -6,6 +6,10 @@ It is a Time Series Dataset
 contains 2075259 measurements gathered in a house located in Sceaux (7km out from Paris, France) between December 2006 and November 2010 (47 months).  
 It has 9 features and does contain missing values (~1.25%)
 
+![License](https://img.shields.io/github/license/olbailey/household-electricity-demand-forecasting)
+
+![Coverage](https://img.shields.io/codecov/c/github/olbailey/household-electricity-demand-forecasting)
+
 ## system setup
 If not all ready install
 pip install numpy, pandas, matplotlib
