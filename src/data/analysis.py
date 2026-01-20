@@ -7,13 +7,16 @@ def find_NANS():
     print(df_null.sum())
 
     df_null_rows = df[df_null["Voltage"] == True]
-    null_dates = df_null_rows["Date"].unique()
+    null_dates = df_null_rows["Datetime"].unique()
     
     print(null_dates)
     print(f"number of days containg null fields: {null_dates.size}")
 
+def remove_null_rows(df_: pd.DataFrame):
+    return df_.dropna(axis=0, thresh=7)
+
 def convert_datetime(df_: pd.DataFrame) -> pd.DataFrame:
-    df_["datetime"] = pd.to_datetime(
+    df_["Datetime"] = pd.to_datetime(
         df_[["Date", "Time"]].agg(' '.join, axis=1),
         dayfirst=True
     )
@@ -35,6 +38,8 @@ df = pd.read_csv("data/raw/household_power_consumption.csv", dtype=object)
 df = correcting_dataframe(df)
 df = convert_datetime(df)
 
-print(df.head())
-
+# find_NANS()
+df = remove_null_rows(df)
+# find_NANS()
+print(df.describe())
 # find_NANS()
