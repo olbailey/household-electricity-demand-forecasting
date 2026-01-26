@@ -3,15 +3,13 @@ import os
 import numpy as np
 import pandas as pd
 
-def remove_null_rows(df_: pd.DataFrame):
-    return df_.dropna(axis=0, thresh=7)
-
 def convert_datetime(df_: pd.DataFrame) -> pd.DataFrame:
     df_["Datetime"] = pd.to_datetime(
         df_[["Date", "Time"]].agg(' '.join, axis=1),
         dayfirst=True
     )
     df_.drop(columns=["Date", "Time"], inplace=True)
+    df_["Datetime"] = pd.to_datetime(df_["Datetime"])
     return df_.iloc[:, [7, 0, 1, 2, 3, 4, 5, 6]]
 
 def correcting_dataframe(df_: pd.DataFrame) -> pd.DataFrame:
@@ -33,7 +31,7 @@ if "processed" not in data_dir_list:
 else:
     print("Directory 'data/processed' already found")
 
-if "processed_data.csv" not in os.listdir(data_dir_path + "/processed"):
+if "processed_data.parquet" not in os.listdir(data_dir_path + "/processed"):
     if "household_power_consumption.csv" not in os.listdir(data_dir_path + "/raw"):
         print("Error! base data set not found!")
         print("Run download_data.py first to download dataset as expected")
@@ -44,10 +42,11 @@ if "processed_data.csv" not in os.listdir(data_dir_path + "/processed"):
 
         df = correcting_dataframe(df)
         df = convert_datetime(df)
-        df = remove_null_rows(df)
+        print(df.dtypes)
+        
         print("Data cleaned.")
 
-        df.to_csv("data/preprocessed/processed_data.csv", index=False)
-        print("Processed data saved to 'data/preprocessed' as processed_data.csv")
+        df.to_parquet("data/processed/processed_data.parquet")
+        print("Processed data saved to 'data/processed' as processed_data.csv")
 else:
     print("Dataset already found in directory")
