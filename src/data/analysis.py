@@ -33,13 +33,14 @@ def correcting_dataframe(df_: pd.DataFrame) -> pd.DataFrame:
     convert_dict = {header: float for header in list(df_)[2:]}
     return df_.astype(convert_dict)
 
-df = pd.read_csv("data/raw/household_power_consumption.csv", dtype=object)
+if __name__ == "__main__":
+    df = pd.read_csv("data/raw/household_power_consumption.csv", dtype=object)
 
-df = correcting_dataframe(df)
-df = convert_datetime(df)
+    df = correcting_dataframe(df)
+    df = convert_datetime(df)
 
-# find_NANS()
-df = remove_null_rows(df)
-# find_NANS()
-print(df.describe())
-# find_NANS()
+    # find_NANS()
+    df = remove_null_rows(df)
+    # find_NANS()
+    print(df.describe())
+    # find_NANS()
