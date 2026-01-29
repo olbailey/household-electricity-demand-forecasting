@@ -9,11 +9,35 @@ This allows you to create the sense of the temporal order in the rectified data
 import pandas as pd
 import numpy as np
 
-def sliding_window_data(data: np.ndarray, W: int) -> np.ndarray:
-    '''
-    Create sliding window dataset
+def convert_sliding_window(df: pd.DataFrame, W: int) -> np.ndarray:
+    # sensor missing valuation
+    missing_values_series = df.isna().any(axis=1)
     
-    :param data: Input timeseriesed data
+    df["Missing_mask"] = missing_values_series.astype(int)
+
+    # time since last real reading
+    x = np.zeros(len(missing_values_series))
+
+    count = 0
+    for i, missing in enumerate(missing_values_series.to_numpy()):
+        if missing:
+            count += 1
+        else:
+            count = 0
+        x[i] = count
+
+    df["Delta_time"] = x
+
+    # zeroing missing data points
+    df.fillna(0)
+
+    return sliding_data(df.to_numpy(), W)
+
+def sliding_data(data: np.ndarray, W: int) -> np.ndarray:
+    '''
+    Slide data into windowed format
+    
+    :param data: Input formatted data
     :type data: np.ndarray
 
     :param W: Window size (number of rows it can see at a time)
@@ -22,11 +46,9 @@ def sliding_window_data(data: np.ndarray, W: int) -> np.ndarray:
     :return: sliding window dataset
     :rtype: ndarray
     '''
-    time_removed = data[:, 1:]
-
-    windowed_data = np.zeros(time_removed.shape[0], time_removed.shape[1] * W)
-    for i in range(time_removed.shape[0] - W):
-        windowed_data[i] = time_removed[i : i + W].flatten()
+    
+    windowed_data = np.lib.stride_tricks.sliding_window_view(data, W, axis=0
+                    ).transpose((0, 2, 1) # transposes the windows as originally created with in flipped order
+                    ).reshape(-1, data.shape[1] * W) # flattens windows into single array
 
     return windowed_data
-
