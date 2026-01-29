@@ -1,4 +1,7 @@
 /data/raw
 /data/processed
 *.pyc
-.vscode
+/.vscode
+/.pytest_cache
+*__pycache__
+/src/my_project.egg-info
