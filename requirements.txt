@@ -1,0 +1,19 @@
+# Core numerical & data handling
+numpy
+pandas
+pyarrow
+
+# Visualization (notebooks)
+matplotlib
+
+# Machine learning
+torch
+
+# Data access
+ucimlrepo
+
+# Experiment tracking (optional)
+# mlflow
+
+# Testing
+pytest

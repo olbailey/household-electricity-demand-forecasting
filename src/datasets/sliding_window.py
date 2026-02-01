@@ -29,7 +29,9 @@ def convert_sliding_window(df: pd.DataFrame, W: int) -> np.ndarray:
     df["Delta_time"] = x
 
     # zeroing missing data points
-    df.fillna(0)
+    df.fillna(0, inplace=True)
+
+    df.drop(columns=["Datetime"], inplace=True)
 
     return sliding_data(df.to_numpy(), W)
 

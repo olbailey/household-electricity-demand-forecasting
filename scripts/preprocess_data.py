@@ -41,9 +41,7 @@ if "processed_data.parquet" not in os.listdir(data_dir_path + "/processed"):
         print("Raw data read in...")
 
         df = correcting_dataframe(df)
-        df = convert_datetime(df)
-        print(df.dtypes)
-        
+        df = convert_datetime(df)        
         print("Data cleaned.")
 
         df.to_parquet("data/processed/processed_data.parquet")

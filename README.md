@@ -10,7 +10,7 @@ It has 9 features and does contain missing values (~1.25%)
 
 ![Coverage](https://img.shields.io/codecov/c/github/olbailey/household-electricity-demand-forecasting)
 
-## system setup
+## How to run
 If not all ready install
 pip install numpy, pandas, matplotlib
 pip install ucimlrepo for scripts
