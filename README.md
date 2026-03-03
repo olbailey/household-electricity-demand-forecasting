@@ -1,7 +1,9 @@
 # household-electricity-demand-forecasting
+
 A time series forecasting model, using historical time-ordered data to predict future values, using machine learning (PyTorch)
 
 ## Dataset description
+
 It is a Time Series Dataset
 contains 2075259 measurements gathered in a house located in Sceaux (7km out from Paris, France) between December 2006 and November 2010 (47 months).  
 It has 9 features and does contain missing values (~1.25%)
@@ -11,10 +13,35 @@ It has 9 features and does contain missing values (~1.25%)
 ![Coverage](https://img.shields.io/codecov/c/github/olbailey/household-electricity-demand-forecasting)
 
 ## How to run
-If not all ready install
-pip install numpy, pandas, matplotlib
-pip install ucimlrepo for scripts
-install pytorch from ...
+
+Developed using Python 3.12
+
+### cd to the project main directory in your terminal
+
+### For linux
+
+1. First run `python3 -m venv .venv`
+2. Activate using: `source .venv/bin/activate`
+3. Finally `pip install -r requirements.txt`  
+   **if you have an nvidia GPU otherwise:** requirements-torch-cpu.txt
+
+### Windows
+
+Use the command prompt not powershell
+
+1. First run `python -m venv .venv`
+2. Activate using: `.venv/Scripts/activate`
+3. Finally `pip install -r requirements.txt`  
+   **if you have an nvidia GPU otherwise:** requirements-torch-cpu.txt
+
+### Mac
+
+1. First run `python3 -m venv .venv`
+2. Activate using: `source .venv/bin/activate`
+3. Finally `pip install -r requirements.txt`  
+   **Note:** Mac users may prefer to install torch separately via `pip install torch` for M-series optimization.
+
+### Next
 
 follow data/README.md for instructions on setting up the Dataset
 
@@ -27,4 +54,5 @@ The dataset is licensed under the **Creative Commons Attribution 4.0 Internation
 License details: ![Here](https://creativecommons.org/licenses/by/4.0/legalcode)
 
 ## <ins>Citation</ins>
+
 Hebrail, G. & Berard, A. (2006). Individual Household Electric Power Consumption [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C58K54.
