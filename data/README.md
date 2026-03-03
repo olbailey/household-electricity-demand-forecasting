@@ -1,5 +1,5 @@
 # How to run
-run scripts/ download_data.py to download dataset into directory
+run `python scripts/download_data.py` in the main project directory to download dataset into directory
 
 dataset Website source ![Here](https://archive.ics.uci.edu/dataset/235/individual+household+electric+power+consumption)
 
