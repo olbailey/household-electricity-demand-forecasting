@@ -5,3 +5,4 @@
 /.pytest_cache
 *__pycache__
 /src/my_project.egg-info
+.venv/
