@@ -34,7 +34,7 @@ else:
 if "processed_data.parquet" not in os.listdir(data_dir_path + "/processed"):
     if "household_power_consumption.csv" not in os.listdir(data_dir_path + "/raw"):
         print("Error! base data set not found!")
-        print("Run download_data.py first to download dataset as expected")
+        print("Run scripts/download_data.py first to download dataset as expected")
     
     else:
         df = pd.read_csv("data/raw/household_power_consumption.csv", dtype=object)
