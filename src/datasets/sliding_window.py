@@ -10,29 +10,6 @@ import pandas as pd
 import numpy as np
 
 def convert_sliding_window(df: pd.DataFrame, W: int) -> np.ndarray:
-    # sensor missing valuation
-    missing_values_series = df.isna().any(axis=1)
-    
-    df["Missing_mask"] = missing_values_series.astype(int)
-
-    # time since last real reading
-    x = np.zeros(len(missing_values_series))
-
-    count = 0
-    for i, missing in enumerate(missing_values_series.to_numpy()):
-        if missing:
-            count += 1
-        else:
-            count = 0
-        x[i] = count
-
-    df["Delta_time"] = x
-
-    # zeroing missing data points
-    df.fillna(0, inplace=True)
-
-    df.drop(columns=["Datetime"], inplace=True)
-
     return sliding_data(df.to_numpy(), W)
 
 def sliding_data(data: np.ndarray, W: int) -> np.ndarray:
