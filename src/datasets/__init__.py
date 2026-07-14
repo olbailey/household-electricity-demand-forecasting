@@ -1,1 +1,1 @@
-from .sliding_window import convert_sliding_window
+from .sliding_window import convert_sliding_window, sliding_data
