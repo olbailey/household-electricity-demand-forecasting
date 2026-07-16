@@ -4,8 +4,9 @@ numpy
 pandas
 pyarrow
 
-# Visualization (notebooks)
+# Visualization
 matplotlib
+tqdm
 
 # Machine learning
 torch
