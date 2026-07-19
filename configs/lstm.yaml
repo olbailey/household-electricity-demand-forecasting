@@ -1,9 +1,9 @@
 model:
-  type: "MultiLayerPerceptron"
-  input_size: 45
-  hidden_layers: [64, 64, 32]
+  type: "LSTM"
+  input_size: 9
+  hidden_size: 64
+  hidden_layers: 2
   output_size: 1
-  activation: "relu"
   
 training:
   batch_size: 512

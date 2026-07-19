@@ -31,3 +31,6 @@ def sliding_data(data: np.ndarray, W: int) -> np.ndarray:
                     ).reshape(-1, data.shape[1] * W) # flattens windows into single array
 
     return windowed_data
+
+def unslide_data(data, W):
+    return data.reshape(data.shape[0], W, data.shape[1] // W)

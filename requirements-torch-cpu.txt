@@ -3,6 +3,7 @@
 numpy
 pandas
 pyarrow
+PyYAML
 
 # Visualization
 matplotlib

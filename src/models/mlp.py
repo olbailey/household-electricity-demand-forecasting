@@ -1,21 +1,22 @@
-import os
-
-import torch
 import torch.nn as nn
 
 class MLP(nn.Module):
-    def __init__(self, num_features, window_size):
+    def __init__(self, config):
         super(MLP, self).__init__()
 
-        self.layers = nn.Sequential(
-            nn.Linear(num_features * window_size, 64),
-            nn.ReLU(),
-            nn.Linear(64, 64),
-            nn.ReLU(),
-            nn.Linear(64, 32),
-            nn.ReLU(),
-            nn.Linear(32, 1)
-        )
+        activation = nn.ReLU() if config["activation"] == "relu" else nn.Tanh()
+
+        layers = []
+
+        current_in = config["input_size"]
+        for hidden_dim in config["hidden_layers"]:
+            layers.append(nn.Linear(current_in, hidden_dim))
+            layers.append(activation)
+            current_in = hidden_dim
+
+        layers.append(nn.Linear(current_in, config["output_size"]))
+
+        self.layers = nn.Sequential(*layers)
 
     def forward(self, x):
         return self.layers(x)
