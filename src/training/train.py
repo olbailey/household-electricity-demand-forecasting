@@ -17,6 +17,8 @@ WINDOW_SIZE = 5
 BATCH_SIZE = 64
 LOSS = 0.001
 
+ENABLE_MODEL_SAVING = False
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 model = MLP(NUM_FEATURES, WINDOW_SIZE)
@@ -38,4 +40,5 @@ try:
         x = int(input("How many points would you like to plot? "))
         plot_predictions(model, val_loader, device, num_points=x)
 except KeyboardInterrupt:
-    finish_training(MODEL_DATA_DIR, model)
+    if ENABLE_MODEL_SAVING:
+        finish_training(MODEL_DATA_DIR, model)

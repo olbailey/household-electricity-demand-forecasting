@@ -30,7 +30,7 @@ def main():
             print("Data cleaned.")
 
             df.to_parquet("data/processed/processed_data.parquet")
-            print("Processed data saved to 'data/processed' as processed_data.csv")
+            print("Processed data saved to 'data/processed' as processed_data.parquet")
     else:
         print("Dataset already found in directory")
         answer = input("would you like to delete and reprocess the data? (y/n): ").strip().lower()

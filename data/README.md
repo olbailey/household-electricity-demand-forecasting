@@ -1,7 +1,15 @@
 # How to run
-run `python scripts/download_data.py` in the main project directory to download dataset into directory
+## Downloading Dataset
+run `python(3) scripts/download_data.py` in the main project directory to download dataset into directory
+
+## Pre-processing Dataset
+run `python(3) scripts/preprocess_data.py` in the main project directory to process the dataset, 
+and create the working .parquet dataset the model datasets work from
+
 
 dataset Website source ![Here](https://archive.ics.uci.edu/dataset/235/individual+household+electric+power+consumption)
+
+
 
 ## Data Description
 1. date: Date in format dd/mm/yyyy
