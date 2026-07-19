@@ -10,11 +10,13 @@ from utils.print import tensor_to_decimal_point
 
 class MainDataset(Dataset):
     def __init__(self, root_dir, window_size):
+        self.window_size = window_size
+
         df = pd.read_parquet(root_dir)
 
         data = torch.from_numpy(df.to_numpy()).float()
 
-        self.labels = data[window_size:, 0]
+        self.labels = self._format_labels(data)
 
         mean = data.mean(dim=0)
         std = data.std(dim=0)
@@ -23,7 +25,7 @@ class MainDataset(Dataset):
 
         data_normalized = (data - mean) / std      
         
-        sliding_window: np.array = sliding_data(data_normalized, window_size)
+        sliding_window: np.array = sliding_data(data_normalized, self.window_size)
         self.data = torch.from_numpy(sliding_window).float()[:-1, :]
 
     def __len__(self):
@@ -31,6 +33,20 @@ class MainDataset(Dataset):
 
     def __getitem__(self, idx):
         return self.data[idx], self.labels[idx]
+    
+    def _format_labels(self, data: torch.Tensor) -> torch.Tensor:
+        # For getting the global active power values for each data window
+        # labels = data[self.window_size:, 0]
+
+
+        # For getting the differences between each global active power each time step
+        current_data_values = data[(self.window_size-1):, 0].clone()
+        previous_data_values = torch.cat((torch.tensor([0]), current_data_values[:-1]))
+        
+        labels = current_data_values - previous_data_values
+
+        return labels
+
     
 def get_data_loaders(dataset, batch_size, device, val_fraction=0.15, test_fraction=0.15):
     total_size = len(dataset)
