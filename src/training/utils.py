@@ -7,8 +7,10 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 
+from tqdm.auto import tqdm
 
-def train_epoch(model, train_loader: DataLoader, loss_function, optimizer: optim.Adam, device: torch.device, print_interval_num=10):
+
+def train_epoch(model, train_loader: DataLoader, loss_function, optimizer: optim.Adam, device: torch.device, epoch_num=0, print_interval_num=10):
     model.train()
     running_loss = 0
     running_mae = 0
@@ -17,7 +19,11 @@ def train_epoch(model, train_loader: DataLoader, loss_function, optimizer: optim
     num_samples = len(train_loader.dataset)
     print_interval = max(1, num_batches // print_interval_num)
 
-    for batch_idx, (data, target) in enumerate(train_loader):
+    train_progress_bar = tqdm(train_loader, desc=f"Training", unit="batch")
+
+    # for batch_idx, (data, target) in enumerate(train_loader):
+    batch_idx = 0
+    for data, target in train_progress_bar:
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         predicted = model(data).squeeze(-1)
@@ -34,17 +40,20 @@ def train_epoch(model, train_loader: DataLoader, loss_function, optimizer: optim
         if batch_idx % print_interval == 0 or (batch_idx + 1) == num_batches:
             avg_loss = running_loss / (batch_idx + 1)
             avg_mae = running_mae / (batch_idx + 1)
-            print(f"\r [{total} / {num_samples}] "
-                f"Loss: {avg_loss:.3f} | Mean Absolute Error: {avg_mae:.6f}", end='')
-    print()
+            # print(f"\r [{total} / {num_samples}] "
+            #     f"Loss: {avg_loss:.3f} | Mean Absolute Error: {avg_mae:.6f}", end='')
+            train_progress_bar.set_postfix(loss=f"{avg_loss:.3f}", MAE=f"{avg_mae:.6f}")
+        batch_idx += 1
 
-def evaluate(model: nn.Module, test_loader: DataLoader, device: torch.device):
+def evaluate(model: nn.Module, val_loader: DataLoader, device: torch.device):
     model.eval()
-    total_samples = len(test_loader.dataset)
+    total_samples = len(val_loader.dataset)
     accuracy = 0
 
     with torch.no_grad():
-        for inputs, targets in test_loader:
+        val_progress_bar = tqdm(val_loader, desc=f"Validation", unit="batch")
+
+        for inputs, targets in val_progress_bar:
             inputs, targets = inputs.to(device), targets.to(device)
             predicted = model(inputs).squeeze(-1)
             accuracy += (predicted - targets).abs().sum().item()
