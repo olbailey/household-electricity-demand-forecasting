@@ -10,13 +10,12 @@ from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 
 
-def train_epoch(model, train_loader: DataLoader, loss_function, optimizer: optim.Adam, device: torch.device, epoch_num=0, print_interval_num=10):
+def train_epoch(model, train_loader: DataLoader, loss_function, optimizer: optim.Adam, device: torch.device, print_interval_num=10):
     model.train()
     running_loss = 0
     running_mae = 0
     total = 0
     num_batches = len(train_loader)
-    num_samples = len(train_loader.dataset)
     print_interval = max(1, num_batches // print_interval_num)
 
     train_progress_bar = tqdm(train_loader, desc=f"Training", unit="batch")
@@ -34,14 +33,12 @@ def train_epoch(model, train_loader: DataLoader, loss_function, optimizer: optim
 
         # Track progress
         running_loss += loss.item()
-        total += target.size(0)
         running_mae += (predicted - target).abs().mean().item()
 
         if batch_idx % print_interval == 0 or (batch_idx + 1) == num_batches:
             avg_loss = running_loss / (batch_idx + 1)
             avg_mae = running_mae / (batch_idx + 1)
-            # print(f"\r [{total} / {num_samples}] "
-            #     f"Loss: {avg_loss:.3f} | Mean Absolute Error: {avg_mae:.6f}", end='')
+            
             train_progress_bar.set_postfix(loss=f"{avg_loss:.3f}", MAE=f"{avg_mae:.6f}")
         batch_idx += 1
 

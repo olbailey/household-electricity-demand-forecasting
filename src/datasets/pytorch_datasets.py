@@ -43,8 +43,8 @@ def get_data_loaders(dataset, batch_size, device, val_fraction=0.15, test_fracti
     test_dataset = Subset(dataset, range(val_end, total_size))
 
     if device.type == "cuda":
-        train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=False, pin_memory=True, num_workers=4)
-        val_loader = DataLoader(dataset=val_dataset, batch_size=batch_size, shuffle=False, pin_memory=True, num_workers=2)
+        train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=False, num_workers=6)
+        val_loader = DataLoader(dataset=val_dataset, batch_size=batch_size, shuffle=False, num_workers=6)
     else:
         train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=False)
         val_loader = DataLoader(dataset=val_dataset, batch_size=batch_size, shuffle=False)

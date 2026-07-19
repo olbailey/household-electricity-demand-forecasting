@@ -14,10 +14,11 @@ MODEL_DATA_DIR = "outputs/models"
 
 NUM_FEATURES = 9
 WINDOW_SIZE = 5
-BATCH_SIZE = 64
+BATCH_SIZE = 512
 LOSS = 0.001
 
 ENABLE_MODEL_SAVING = False
+SHOWING_GRAPHS = False
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -37,8 +38,12 @@ try:
         train_epoch(model, train_loader, loss_function, optimizer, device)
         accuracy = evaluate(model, val_loader, device)
         print(f"Validation MAE: {accuracy:.6f}")
-        x = int(input("How many points would you like to plot? "))
-        plot_predictions(model, val_loader, device, num_points=x)
+        if SHOWING_GRAPHS:
+            try:
+                x = int(input("How many points would you like to plot? "))
+                plot_predictions(model, val_loader, device, num_points=x)
+            except ValueError:
+                pass
 except KeyboardInterrupt:
     if ENABLE_MODEL_SAVING:
         finish_training(MODEL_DATA_DIR, model)
