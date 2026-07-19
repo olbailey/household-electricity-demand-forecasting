@@ -10,6 +10,7 @@ tqdm
 
 # Machine learning
 torch
+torchmetrics
 
 # Data access
 ucimlrepo

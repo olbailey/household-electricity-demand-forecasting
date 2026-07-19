@@ -7,3 +7,4 @@
 /src/my_project.egg-info
 .venv/
 .idea/
+/outputs/models/temp/

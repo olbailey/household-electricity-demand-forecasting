@@ -1,4 +1,5 @@
 import os
+import math
 
 import matplotlib.pyplot as plt
 
@@ -6,6 +7,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
+
+from torchmetrics.regression import MeanSquaredError, MeanAbsoluteError
 
 from tqdm.auto import tqdm
 
@@ -44,8 +47,9 @@ def train_epoch(model, train_loader: DataLoader, loss_function, optimizer: optim
 
 def evaluate(model: nn.Module, val_loader: DataLoader, device: torch.device):
     model.eval()
-    total_samples = len(val_loader.dataset)
-    accuracy = 0
+
+    rmse_metric = MeanSquaredError(squared=False)
+    mae_metric = MeanAbsoluteError()
 
     with torch.no_grad():
         val_progress_bar = tqdm(val_loader, desc=f"Validation", unit="batch")
@@ -53,9 +57,52 @@ def evaluate(model: nn.Module, val_loader: DataLoader, device: torch.device):
         for inputs, targets in val_progress_bar:
             inputs, targets = inputs.to(device), targets.to(device)
             predicted = model(inputs).squeeze(-1)
-            accuracy += (predicted - targets).abs().sum().item()
 
-        return accuracy / total_samples
+            rmse_metric.update(predicted, targets)
+            mae_metric.update(predicted, targets)
+
+    mae = mae_metric.compute().item()
+    rmse = rmse_metric.compute().item()
+
+    return mae, rmse
+    
+class EarlyStopping:
+    def __init__(self, temp_model_dir, patience, min_delta, restore_best_weights=True):
+        self.current_best = math.inf
+        self.temp_model_dir = temp_model_dir
+        self.patience = patience
+        self.min_delta = min_delta
+        self.restore_best_weights = restore_best_weights
+
+        self.count = 0
+        self.stopped = False
+
+    def update(self, model, value) -> nn.Module:
+        if value < self.current_best and self.current_best - value > self.min_delta:
+            self.save_model(model)
+            print(f"New best, saving model...")
+            self.current_best = value
+            self.count = 0
+        elif self.count < self.patience:
+            self.count += 1 
+            print(f"Model has regressed, current count: {self.count}/{self.patience}, Value Delta: {self.current_best - value:.8f}")
+        elif self.restore_best_weights:
+            model = self.restore_best_model(model)
+            self.stopped = True
+
+        return model
+        
+    def save_model(self, model):
+        torch.save(model.state_dict(), os.path.join(self.temp_model_dir, "model_temp_save.pt"))
+
+    def restore_best_model(self, model:nn.Module):
+        try:
+            model.load_state_dict(torch.load(os.path.join(self.temp_model_dir, "model_temp_save.pt")))
+        except FileNotFoundError:
+            print("ERROR! Could not find model parameter file!")
+
+        return model
+    
     
 def finish_training(data_dir: str, model: nn.Module):
     print()
@@ -67,7 +114,7 @@ def finish_training(data_dir: str, model: nn.Module):
         return
 
     model_name = input("enter the file name for the model trained: ")
-    torch.save(model, os.path.join(data_dir, model_name + ".pth"))
+    torch.save(model, os.path.join(data_dir, model_name + ".pt"))
 
 
 def plot_predictions(model, loader: DataLoader, device: torch.device, num_points: int = None, title: str = "Predicted vs Actual"):
