@@ -1,13 +1,10 @@
 import torch.nn as nn
 
-from datasets import unslide_data
-
 NUM_FEATURES = 9
 
 class LSTM(nn.Module):
-    def __init__(self, config, window_size):
+    def __init__(self, config):
         super(LSTM, self).__init__()
-        self.window_size = window_size
 
         self.lstm = nn.LSTM(
             input_size=config["input_size"], 

@@ -28,21 +28,33 @@ LEARNING_RATE = configs["training"]["learning_rate"]
 
 ENABLE_MODEL_SAVING = False
 OVERIDE_SHOWING_GRAPHS = True
+MODEL_COMPUTE_VALUE_DELTAS = False
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 if configs["model"]["type"] == "MultiLayerPerceptron":
-    model = MLP(configs["model"])
+    model = MLP(configs["model"], WINDOW_SIZE)
 elif configs["model"]["type"] == "LSTM":
-    model = LSTM(configs["model"], WINDOW_SIZE)
+    model = LSTM(configs["model"])
 
 
 loss_function = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), LEARNING_RATE)
 schedular_steplr = optim.lr_scheduler.StepLR(optimizer, step_size=4, gamma=0.1)
-schedular_plateau = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.2, patience=2)
+schedular_plateau = optim.lr_scheduler.ReduceLROnPlateau(
+    optimizer, 
+    mode="min", 
+    threshold_mode="abs", 
+    threshold=configs["training"]["min_delta"], 
+    factor=0.2, 
+    patience=2
+)
 
-electricity_dataset = MainDataset("data/processed/processed_data.parquet", WINDOW_SIZE, STRIDE_SIZE, PREDICTION_SIZE)
+electricity_dataset = MainDataset(
+    "data/processed/processed_data.parquet", 
+    WINDOW_SIZE, STRIDE_SIZE, PREDICTION_SIZE, 
+    MODEL_COMPUTE_VALUE_DELTAS
+)
 
 train_loader, val_loader, test_loader = get_data_loaders(electricity_dataset, BATCH_SIZE, device)
 
@@ -64,7 +76,7 @@ try:
 
         model = early_stopping.update(model, mae)
 
-        # schedular_plateau.step(mae)
+        schedular_plateau.step(mae)
 
         show_graph(model, val_loader, device, overide_show=OVERIDE_SHOWING_GRAPHS)
 

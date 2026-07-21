@@ -114,7 +114,7 @@ def finish_training(data_dir: str, model: nn.Module):
         return
 
     model_name = input("enter the file name for the model trained: ")
-    torch.save(model, os.path.join(data_dir, model_name + ".pt"))
+    torch.save(model.state_dict(), os.path.join(data_dir, model_name + ".pt"))
 
 def show_graph(model, val_loader, device, overide_show=False):
     if not overide_show:

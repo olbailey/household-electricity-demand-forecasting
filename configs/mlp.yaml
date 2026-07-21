@@ -1,18 +1,18 @@
 model:
   type: "MultiLayerPerceptron"
-  input_size: 45
-  hidden_layers: [64, 64, 32]
+  input_size: 9
+  hidden_layers: [128, 128, 64, 32]
   output_size: 1
   activation: "relu"
   
 training:
   batch_size: 512
   learning_rate: 0.001
-  window_size: 5
+  window_size: 25
   stride_size: 1
   num_features: 9
-  patience: 5
-  min_delta: 0.0001
+  patience: 4
+  min_delta: 0.001
 
 data:
   model_dir: "outputs/models/mlp"

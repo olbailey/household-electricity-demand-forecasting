@@ -9,7 +9,7 @@ from datasets.sliding_window import sliding_data
 from utils.print import tensor_to_decimal_point
 
 class MainDataset(Dataset):
-    def __init__(self, root_dir, window_size, window_stride, prediction_size):
+    def __init__(self, root_dir, window_size, window_stride, prediction_size, compute_delta):
         self.window_size = window_size
         self.window_stride = window_stride # so that the yaml file starts the value at 0
         self.prediction_size = prediction_size
@@ -18,17 +18,21 @@ class MainDataset(Dataset):
 
         data = torch.from_numpy(df.to_numpy()).float()
 
-        self.labels = self._format_labels(data)
+        self.labels = self._format_labels(data, compute_delta)
 
         mean = data.mean(dim=0)
         std = data.std(dim=0)
         print(f"mean: {tensor_to_decimal_point(mean, dp=3)}")
         print(f"std:  {tensor_to_decimal_point(std, dp=3)}")
 
-        data_normalized = (data - mean) / std      
+        data_normalized = (data - mean) / std
+        # data_normalized = data      
         
         sliding_window = sliding_data(data_normalized, window_size, window_stride)
         self.data = sliding_window[:-1, :]
+
+        # print(self.data[:2])
+        # print(self.labels[:10])
 
     def __len__(self):
         return len(self.labels)
@@ -36,22 +40,31 @@ class MainDataset(Dataset):
     def __getitem__(self, idx):
         return self.data[idx], self.labels[idx]
     
-    def _format_labels(self, data: torch.Tensor) -> torch.Tensor:
-        # For getting the global active power values for each data window
-        # labels = data[self.window_size:, 0]
+    def _format_labels(self, data: torch.Tensor, compute_delta: bool) -> torch.Tensor:
+        if compute_delta:
+            # For getting the differences between each global active power each time step
+            current_data_values = data[(self.window_size-1):, 0].clone()
+            # creates a redundant first value that will need to be removed to allow the arrays to be mismatch for difference calculation
+            previous_data_values = torch.cat((torch.tensor([0]), current_data_values[:-1]))
+            
+            labels = current_data_values - previous_data_values
+
+            if self.prediction_size > 1:
+                labels = labels.unfold(0, self.prediction_size, 1)
+
+            # Removes the first redundant value, and then collects the nth value to work with window strides
+            labels = labels[1::self.window_stride]
+        else:
+
+            # For getting the global active power values for each data window
+            labels = data[self.window_size:, 0]
 
 
-        # For getting the differences between each global active power each time step
-        current_data_values = data[(self.window_size-1):, 0].clone()
-        # creates a redundant first value that will need to be removed to allow the arrays to be mismatch for difference calculation
-        previous_data_values = torch.cat((torch.tensor([0]), current_data_values[:-1]))
-        
-        labels = current_data_values - previous_data_values
-        if self.prediction_size > 1:
-            labels = labels.unfold(0, self.prediction_size, 1)
-        
-        # Removes the first redundant value, and then collects the nth value to work with window strides
-        labels = labels[1::self.window_stride]
+            if self.prediction_size > 1:
+                labels = labels.unfold(0, self.prediction_size, 1)
+            
+            # Collects the nth value to work with window strides
+            labels = labels[::self.window_stride]
 
 
         return labels        

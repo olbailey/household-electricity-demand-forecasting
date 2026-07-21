@@ -12,7 +12,7 @@ training:
   stride_size: 20
   num_features: 9
   patience: 4
-  min_delta: 0.00008
+  min_delta: 0.001
 
 data:
   model_dir: "outputs/models/lstm"
