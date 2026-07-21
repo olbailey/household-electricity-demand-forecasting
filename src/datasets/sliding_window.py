@@ -2,35 +2,28 @@
 Time seriesed data is classified using 'sliding windows'
 A good analogy is how if you had a tape of information with rows of the features.
 The window is a cardboard cutout allowing you to see only a specific number of rows at a time
-this is window is then flattened to a single vector, the window is then iterated only one row forward at a time
-This allows you to create the sense of the temporal order in the rectified data
+the window is then iterated a set number of rows forward at a time
+This allows you to create the sense of the temporal order in the data
 '''
 
-import pandas as pd
-import numpy as np
+import torch
 
-def convert_sliding_window(df: pd.DataFrame, W: int) -> np.ndarray:
-    return sliding_data(df.to_numpy(), W)
-
-def sliding_data(data: np.ndarray, W: int) -> np.ndarray:
+def sliding_data(data: torch.Tensor, W: int, stride = 1) -> torch.Tensor:
     '''
     Slide data into windowed format
     
     :param data: Input formatted data
-    :type data: np.ndarray
+    :type data: torch.Tensor
 
     :param W: Window size (number of rows it can see at a time)
     :type W: int
 
+    :param stride: Stride size (number of rows skipped each between each window default = 1 meaning none are skipped)
+    :type stride: int
+
     :return: sliding window dataset
-    :rtype: ndarray
+    :rtype: torch.Tensor
     '''
-    
-    windowed_data = np.lib.stride_tricks.sliding_window_view(data, W, axis=0
-                    ).transpose((0, 2, 1) # transposes the windows as originally created with in flipped order
-                    ).reshape(-1, data.shape[1] * W) # flattens windows into single array
+    windowed_data = data.unfold(0, size=W, step=stride).permute(0, 2, 1).contiguous()
 
     return windowed_data
-
-def unslide_data(data, W):
-    return data.reshape(data.shape[0], W, data.shape[1] // W)

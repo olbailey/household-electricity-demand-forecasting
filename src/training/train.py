@@ -13,7 +13,6 @@ from .utils import train_epoch, evaluate, finish_training, EarlyStopping
 from .utils import show_graph
 
 
-
 with open("configs/lstm.yaml", 'r') as file:
     configs = yaml.safe_load(file)
 
@@ -22,6 +21,7 @@ MODEL_TEMP_DATA_DIR = "outputs/models/temp"
 
 NUM_FEATURES = configs["training"]["num_features"]
 WINDOW_SIZE = configs["training"]["window_size"]
+STRIDE_SIZE = configs["training"]["stride_size"]
 BATCH_SIZE = configs["training"]["batch_size"]
 LEARNING_RATE = configs["training"]["learning_rate"]
 
@@ -41,7 +41,7 @@ optimizer = optim.Adam(model.parameters(), LEARNING_RATE)
 schedular_steplr = optim.lr_scheduler.StepLR(optimizer, step_size=4, gamma=0.1)
 schedular_plateau = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.2, patience=2)
 
-electricity_dataset = MainDataset("data/processed/processed_data.parquet", WINDOW_SIZE)
+electricity_dataset = MainDataset("data/processed/processed_data.parquet", WINDOW_SIZE, STRIDE_SIZE, prediction_size=2)
 
 train_loader, val_loader, test_loader = get_data_loaders(electricity_dataset, BATCH_SIZE, device)
 
@@ -63,7 +63,7 @@ try:
 
         model = early_stopping.update(model, mae)
 
-        schedular_plateau.step(mae)
+        # schedular_plateau.step(mae)
 
         show_graph(model, val_loader, device, overide_show=OVERIDE_SHOWING_GRAPHS)
 

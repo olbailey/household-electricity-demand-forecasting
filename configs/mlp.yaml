@@ -9,6 +9,7 @@ training:
   batch_size: 512
   learning_rate: 0.001
   window_size: 5
+  stride_size: 1
   num_features: 9
   patience: 5
   min_delta: 0.0001

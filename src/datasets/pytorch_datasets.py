@@ -9,8 +9,10 @@ from datasets.sliding_window import sliding_data
 from utils.print import tensor_to_decimal_point
 
 class MainDataset(Dataset):
-    def __init__(self, root_dir, window_size):
+    def __init__(self, root_dir, window_size, window_stride, prediction_size):
         self.window_size = window_size
+        self.window_stride = window_stride # so that the yaml file starts the value at 0
+        self.prediction_size = prediction_size
 
         df = pd.read_parquet(root_dir)
 
@@ -25,8 +27,8 @@ class MainDataset(Dataset):
 
         data_normalized = (data - mean) / std      
         
-        sliding_window: np.array = sliding_data(data_normalized, self.window_size)
-        self.data = torch.from_numpy(sliding_window).float()[:-1, :]
+        sliding_window = sliding_data(data_normalized, window_size, window_stride)
+        self.data = sliding_window[:-1, :]
 
     def __len__(self):
         return len(self.labels)
@@ -41,11 +43,18 @@ class MainDataset(Dataset):
 
         # For getting the differences between each global active power each time step
         current_data_values = data[(self.window_size-1):, 0].clone()
+        # creates a redundant first value that will need to be removed to allow the arrays to be mismatch for difference calculation
         previous_data_values = torch.cat((torch.tensor([0]), current_data_values[:-1]))
         
         labels = current_data_values - previous_data_values
+        if self.prediction_size > 1:
+            labels = labels.unfold(0, self.prediction_size, 1)
+        
+        # Removes the first redundant value, and then collects the nth value to work with window strides
+        labels = labels[1::self.window_stride]
 
-        return labels
+
+        return labels        
 
     
 def get_data_loaders(dataset, batch_size, device, val_fraction=0.15, test_fraction=0.15):

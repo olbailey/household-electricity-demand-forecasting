@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 
 class MLP(nn.Module):
@@ -18,6 +19,7 @@ class MLP(nn.Module):
 
         self.layers = nn.Sequential(*layers)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor):
+        x = x.flatten(start_dim=1)
         return self.layers(x)
     

@@ -19,7 +19,6 @@ class LSTM(nn.Module):
 
 
     def forward(self, x):
-        x = unslide_data(x, self.window_size)
         out, (hidden_state, cell_state) = self.lstm(x)
         last_out = out[:, -1, :]
         return self.fc(last_out)
