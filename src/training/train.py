@@ -22,6 +22,7 @@ MODEL_TEMP_DATA_DIR = "outputs/models/temp"
 NUM_FEATURES = configs["training"]["num_features"]
 WINDOW_SIZE = configs["training"]["window_size"]
 STRIDE_SIZE = configs["training"]["stride_size"]
+PREDICTION_SIZE = configs["model"]["output_size"]
 BATCH_SIZE = configs["training"]["batch_size"]
 LEARNING_RATE = configs["training"]["learning_rate"]
 
@@ -41,7 +42,7 @@ optimizer = optim.Adam(model.parameters(), LEARNING_RATE)
 schedular_steplr = optim.lr_scheduler.StepLR(optimizer, step_size=4, gamma=0.1)
 schedular_plateau = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.2, patience=2)
 
-electricity_dataset = MainDataset("data/processed/processed_data.parquet", WINDOW_SIZE, STRIDE_SIZE, prediction_size=2)
+electricity_dataset = MainDataset("data/processed/processed_data.parquet", WINDOW_SIZE, STRIDE_SIZE, PREDICTION_SIZE)
 
 train_loader, val_loader, test_loader = get_data_loaders(electricity_dataset, BATCH_SIZE, device)
 
