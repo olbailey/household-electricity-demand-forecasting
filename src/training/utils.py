@@ -116,6 +116,13 @@ def finish_training(data_dir: str, model: nn.Module):
     model_name = input("enter the file name for the model trained: ")
     torch.save(model, os.path.join(data_dir, model_name + ".pt"))
 
+def show_graph(model, val_loader, device, overide_show=False):
+    if not overide_show:
+        try:
+            x = int(input("How many points would you like to plot? "))
+            plot_predictions(model, val_loader, device, num_points=x)
+        except ValueError:
+            pass
 
 def plot_predictions(model, loader: DataLoader, device: torch.device, num_points: int = None, title: str = "Predicted vs Actual"):
     """
