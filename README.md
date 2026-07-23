@@ -41,10 +41,10 @@ Use the command prompt not powershell
 3. Finally `pip install -r requirements.txt`  
    **Note:** Mac users may prefer to install torch separately via `pip install torch` for M-series optimization.
 
-### Next
-follow data/README.md for instructions on setting up the Dataset
+### <u>Next</u>
+follow data/README.md for instructions for setting up the Dataset
 
-#### Install the package in editable mode
+### Install the package in editable mode
 This is so your local source is used, which fixes issues with relative imports, and package-relative paths: <br>
 ```bash
 pip install -e .
