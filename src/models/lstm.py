@@ -1,9 +1,8 @@
+import torch
 import torch.nn as nn
 
-NUM_FEATURES = 9
-
 class LSTM(nn.Module):
-    def __init__(self, config):
+    def __init__(self, config: dict):
         super(LSTM, self).__init__()
 
         self.lstm = nn.LSTM(
@@ -15,7 +14,7 @@ class LSTM(nn.Module):
         self.fc = nn.Linear(config["hidden_size"], config["output_size"])
 
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor):
         out, (hidden_state, cell_state) = self.lstm(x)
         last_out = out[:, -1, :]
         return self.fc(last_out)

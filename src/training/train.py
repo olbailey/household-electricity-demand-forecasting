@@ -9,8 +9,8 @@ import torch.optim as optim
 from models import MLP, LSTM
 from datasets.pytorch_datasets import MainDataset, get_data_loaders
 
-from .utils import train_epoch, evaluate, finish_training, EarlyStopping
-from .utils import show_graph
+from utils.training import train_epoch, evaluate, finish_training, EarlyStopping
+from utils.training import show_graph
 
 
 with open("configs/lstm.yaml", 'r') as file:
@@ -18,8 +18,8 @@ with open("configs/lstm.yaml", 'r') as file:
 
 MODEL_DATA_DIR = configs["data"]["model_dir"]
 MODEL_TEMP_DATA_DIR = "outputs/models/temp"
+DATA_FILE_PATH = "data/processed/without_null_handling.parquet"
 
-NUM_FEATURES = configs["training"]["num_features"]
 WINDOW_SIZE = configs["training"]["window_size"]
 STRIDE_SIZE = configs["training"]["stride_size"]
 PREDICTION_SIZE = configs["model"]["output_size"]
@@ -33,8 +33,10 @@ MODEL_COMPUTE_VALUE_DELTAS = False
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 if configs["model"]["type"] == "MultiLayerPerceptron":
+    print(f"Training MultiLayerPerceptron model, with window size: {WINDOW_SIZE}, stride size: {STRIDE_SIZE}, and prediction size: {PREDICTION_SIZE}")
     model = MLP(configs["model"], WINDOW_SIZE)
 elif configs["model"]["type"] == "LSTM":
+    print(f"Training LSTM model, with window size: {WINDOW_SIZE}, stride size: {STRIDE_SIZE}, and prediction size: {PREDICTION_SIZE}")
     model = LSTM(configs["model"])
 
 
@@ -51,7 +53,7 @@ schedular_plateau = optim.lr_scheduler.ReduceLROnPlateau(
 )
 
 electricity_dataset = MainDataset(
-    "data/processed/processed_data.parquet", 
+    DATA_FILE_PATH, 
     WINDOW_SIZE, STRIDE_SIZE, PREDICTION_SIZE, 
     MODEL_COMPUTE_VALUE_DELTAS
 )

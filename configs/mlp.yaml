@@ -10,7 +10,6 @@ training:
   learning_rate: 0.001
   window_size: 25
   stride_size: 1
-  num_features: 9
   patience: 4
   min_delta: 0.001
 

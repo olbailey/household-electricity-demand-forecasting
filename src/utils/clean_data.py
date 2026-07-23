@@ -36,50 +36,53 @@ def handle_missing_data(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
-def convert_datetime(df_: pd.DataFrame) -> pd.DataFrame: # Not currently used as date is subsequently deleted
+def convert_datetime(df: pd.DataFrame) -> pd.DataFrame: # Not currently used as date is subsequently deleted
     """converts the datetime of a dataset to ISO 8601 time format
     To be ran after correcting_dataframe()
 
     Args:
-        df_ (pd.DataFrame): _description_
+        df (pd.DataFrame): _description_
 
     Returns:
         pd.DataFrame: _description_
     """
 
-    df_["Datetime"] = pd.to_datetime(
-        df_[["Date", "Time"]].agg(' '.join, axis=1),
+    df["Datetime"] = pd.to_datetime(
+        df[["Date", "Time"]].agg(' '.join, axis=1),
         dayfirst=True
     )
-    df_.drop(columns=["Date", "Time"], inplace=True)
-    df_["Datetime"] = pd.to_datetime(df_["Datetime"])
-    return df_.iloc[:, [7, 0, 1, 2, 3, 4, 5, 6]]
+    df.drop(columns=["Date", "Time"], inplace=True)
+    df["Datetime"] = pd.to_datetime(df["Datetime"])
+    return df.iloc[:, [7, 0, 1, 2, 3, 4, 5, 6]]
 
-def remove_datetime(df_: pd.DataFrame) -> pd.DataFrame:
+def remove_datetime(df: pd.DataFrame) -> pd.DataFrame:
     """deletes columns regarding the date and time
 
     Args:
-        df_ (pd.DataFrame): _description_
+        df (pd.DataFrame): _description_
 
     Returns:
         pd.DataFrame: _description_
     """
-    df_.drop(columns=["Date", "Time"], inplace=True)
-    return df_
+    df.drop(columns=["Date", "Time"], inplace=True)
+    return df
 
 
-def correcting_dataframe(df_: pd.DataFrame) -> pd.DataFrame:
+def correcting_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """Replaces figurative nan '?' with numpy.nan values. 
     Corrects data types of columns to floats where necessary
     To be ran first
 
     Args:
-        df_ (pd.DataFrame): _description_
+        df (pd.DataFrame): _description_
 
     Returns:
         pd.DataFrame: _description_
     """
-    df_.replace('?', np.nan, inplace=True)
+    df.replace('?', np.nan, inplace=True)
 
-    convert_dict = {header: float for header in list(df_)[2:]}
-    return df_.astype(convert_dict)
+    convert_dict = {header: float for header in list(df)[2:]}
+    return df.astype(convert_dict)
+
+def replace_nan_with_zero(df: pd.DataFrame):
+    return df.fillna(0, inplace=True)

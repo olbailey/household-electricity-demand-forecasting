@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 class MLP(nn.Module):
-    def __init__(self, config, window_size):
+    def __init__(self, config: dict, window_size: int):
         super(MLP, self).__init__()
 
         activation = nn.ReLU() if config["activation"] == "relu" else nn.Tanh()
