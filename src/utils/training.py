@@ -12,7 +12,7 @@ from torchmetrics.regression import MeanSquaredError, MeanAbsoluteError
 
 from tqdm.auto import tqdm
 
-from .create_graph import plot_predictions
+from .graphs import plot_predictions
 
 
 def train_epoch(model, train_loader: DataLoader, loss_function, optimizer: optim.Adam, device: torch.device, print_interval_num=10):
