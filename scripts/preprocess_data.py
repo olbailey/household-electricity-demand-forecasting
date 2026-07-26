@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from utils.clean_data import *
+from data.processing import *
 
 def main():
     data_dir_path = os.getcwd() + "/data"
